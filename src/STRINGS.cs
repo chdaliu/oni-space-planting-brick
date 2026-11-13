@@ -52,8 +52,9 @@ namespace SpacePlantingBrick
                 "一块自带环境维持系统的种植砖，专为真空、极端温度和远离殖民地的地方设计。\n\n" +
                 "砖体会自动把种在其中的植物维持在它最适宜的温度，" +
                 "并在需要时点亮内置生长灯。灌溉液需要通过液体管道输入砖体，" +
-                "固体肥料则由复制人搬运；种植砖不会免费提供资源。" +
-                "砖体内部是类似液培砖的营养液槽与生长介质，液体会储存在槽内供植物吸收。\n\n" +
+                "以气体为灌溉物的作物还可以接入气体管道，固体肥料则由复制人搬运；" +
+                "种植砖不会免费提供资源。" +
+                "砖体内部是类似液培砖的营养液槽与生长介质，资源会储存在槽内供植物吸收。\n\n" +
                 "通过建筑详情面板下方功能区的按钮，可以在“完全隔绝”“仅透气”“透气透水”之间循环切换。" +
                 "完全隔绝时，植物所在格不再与外界交换热量、气体和液体；" +
                 "仅透气时，气体和热量可以进出植物所在格，但液体不能进入；" +
@@ -67,9 +68,10 @@ namespace SpacePlantingBrick
                 "extreme temperatures, and places far from the colony.\n\n" +
                 "The brick automatically keeps a planted crop at its ideal temperature and " +
                 "turns on its integrated grow light when needed. Irrigation liquid must be " +
-                "piped into the brick, and solid fertilizer must be delivered by duplicants; " +
-                "the brick does not supply resources for free. Inside, a hydroponic-style " +
-                "nutrient reservoir stores the liquid for the crop to absorb.\n\n" +
+                "piped into the brick; crops that use a gas as irrigation can use the optional " +
+                "gas pipe, and solid fertilizer must be delivered by duplicants. The brick does " +
+                "not supply resources for free. Inside, a hydroponic-style nutrient reservoir " +
+                "stores resources for the crop to absorb.\n\n" +
                 "The action area below the building details panel cycles through Fully Sealed, " +
                 "Gas Permeable, and Gas + Liquid Permeable. When fully sealed, the plant's cells " +
                 "exchange no heat, gas, or liquid with the outside. Gas Permeable lets gas and heat " +
@@ -84,13 +86,15 @@ namespace SpacePlantingBrick
                 "Built from dirt plus metal ore or refined metal, and unlocked by the same tech " +
                 "as the standard Farm Tile.");
             BUILDINGS.PREFABS.SPACEPLANTINGBRICK.EFFECT = L(zh,
-                "自动维持植物适宜温度\n灌溉液需接入液体管道\n固体肥料由复制人搬运\n内置营养液槽与生长介质\n" +
+                "自动维持植物适宜温度\n灌溉液需接入液体管道\n气体灌溉作物可接入气体管道\n固体肥料由复制人搬运\n" +
+                "内置营养液槽与生长介质\n" +
                 "需要光照时自带生长灯\n可切换完全隔绝 / 仅透气 / 透气透水\n" +
                 "植物气压/温度/光照/辐射由砖体维持\n植物不受外界环境影响\n" +
                 "可倒置种植火椒等垂吊植物\n尺寸与位置同原版液培砖\n" +
                 "泥土 + 金属矿石/精炼金属建造",
                 "Keeps crops at their ideal temperature\nLiquid irrigation must be piped in\n" +
-                "Solid fertilizer delivered by duplicants\nHydroponic nutrient reservoir and grow bed\n" +
+                "Gas-irrigation crops can use a gas pipe\nSolid fertilizer delivered by duplicants\n" +
+                "Hydroponic nutrient reservoir and grow bed\n" +
                 "Integrated grow light when needed\nCycle Fully Sealed / Gas Permeable / Gas + Liquid Permeable\n" +
                 "Brick maintains crop pressure, temperature, light, and radiation\n" +
                 "Crops ignore the outside environment\n" +
@@ -140,11 +144,13 @@ namespace SpacePlantingBrick
                 "所需资源：{0}",
                 "Required resources: {0}");
             UI.SPACEPLANTINGBRICK.NUTRIENTS_TOOLTIP = L(zh,
-                "这些是植物生长所需的灌溉液和肥料。液体灌溉需要通过液体管道输入砖体；" +
-                "气体灌溉和固体肥料由复制人搬运。种植砖不会自动补充资源。",
-                "These are the irrigation liquid and fertilizer the crop needs. Liquid irrigation " +
-                "must be piped into the brick; gas irrigation and solid fertilizer are delivered by " +
-                "duplicants. The brick does not supply resources for free.");
+                "这些是植物生长所需的灌溉物和肥料。液体灌溉需要通过液体管道输入砖体；" +
+                "气体灌溉作物可以接入气体管道，也可以由复制人手动搬运；固体肥料由复制人搬运。" +
+                "种植砖不会自动补充资源。",
+                "These are the irrigation and fertilizer the crop needs. Liquid irrigation must be " +
+                "piped into the brick; gas-irrigation crops can use a gas pipe or manual duplicant " +
+                "delivery, and solid fertilizer is delivered by duplicants. The brick does not " +
+                "supply resources for free.");
 
             UI.SPACEPLANTINGBRICK.GROW_LIGHT_ON = L(zh, "生长灯：开启", "Grow light: on");
             UI.SPACEPLANTINGBRICK.GROW_LIGHT_OFF = L(zh, "生长灯：关闭", "Grow light: off");

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TUNING;
 using UnityEngine;
 
@@ -8,16 +9,24 @@ namespace SpacePlantingBrick
     /// brick cell is solid and the crop grows in the adjacent cell above or
     /// below it. The plant plot/storage behaviour mirrors the vanilla Farm
     /// Tile, including its FlipV orientation for hanging crops. Liquids are
-    /// supplied through a liquid pipe like the vanilla Hydroponic Farm, while
-    /// solid fertilizer is delivered by duplicants. The SpacePlantingBrick
-    /// component adds temperature, light, and environment control, but no
-    /// longer supplies resources for free.
+    /// supplied through a liquid pipe like the vanilla Hydroponic Farm, solid
+    /// fertilizer is delivered by duplicants, and crops that use a gas as
+    /// irrigation can use the optional secondary gas pipe. The
+    /// SpacePlantingBrick component adds temperature, light, and environment
+    /// control, but no longer supplies resources for free.
     /// </summary>
     public sealed class SpacePlantingBrickConfig : IBuildingConfig
     {
         public const string ID = "SpacePlantingBrick";
 
         private const string ANIM = "space_planting_brick_kanim";
+
+        private static void AddGasInputPort(GameObject go)
+        {
+            ConduitSecondaryInput port = go.AddOrGet<ConduitSecondaryInput>();
+            port.portInfo = new ConduitPortInfo(
+                ConduitType.Gas, SpacePlantingGasInput.PortOffset);
+        }
 
         public override BuildingDef CreateBuildingDef()
         {
@@ -109,6 +118,16 @@ namespace SpacePlantingBrick
 
             Prioritizable.AddRef(go);
 
+            // Optional secondary gas input for crops that use a gas as
+            // irrigation, such as Gas Grass with Chlorine.
+            AddGasInputPort(go);
+            go.AddOrGet<SpacePlantingGasInput>();
+
+            // Vanilla Hydroponic Farm behaviour: let duplicants empty the
+            // internal storage, e.g. after a wrong liquid was piped in.
+            DropAllWorkable dropAll = go.AddOrGet<DropAllWorkable>();
+            dropAll.removeTags = new List<Tag>();
+
             go.AddOrGet<SpacePlantingBrick>();
             go.AddOrGet<SpacePlantingBrickEnvironmentButton>();
 
@@ -121,6 +140,18 @@ namespace SpacePlantingBrick
             light.Offset = new Vector2(0f, 1f);
             light.drawOverlay = false;
             light.enabled = false;
+        }
+
+        public override void DoPostConfigurePreview(BuildingDef def, GameObject go)
+        {
+            base.DoPostConfigurePreview(def, go);
+            AddGasInputPort(go);
+        }
+
+        public override void DoPostConfigureUnderConstruction(GameObject go)
+        {
+            base.DoPostConfigureUnderConstruction(go);
+            AddGasInputPort(go);
         }
 
         public override void DoPostConfigureComplete(GameObject go)
