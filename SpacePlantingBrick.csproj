@@ -11,7 +11,7 @@
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <AssemblyTitle>ONI-SpacePlantingBrick</AssemblyTitle>
     <Product>Space Planting Brick / 太空种植砖</Product>
-    <Version>1.3.0</Version>
+    <Version>1.3.1</Version>
     <DebugType>none</DebugType>
     <NoWarn>CS0436;CS0618</NoWarn>
 

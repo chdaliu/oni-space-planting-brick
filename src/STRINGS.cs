@@ -63,7 +63,7 @@ namespace SpacePlantingBrick
                 "植物不受外界环境影响；但灌溉和肥料仍需按上述方式供应。\n\n" +
                 "和原版液培砖一样支持上下翻转：正立时植物向上生长，倒置时植物向下生长，" +
                 "适合火椒等垂吊植物。贴图尺寸和位置也与原版液培砖保持一致。\n\n" +
-                "使用泥土和金属矿石或精炼金属建造，与普通种植砖处于同一科技。",
+                "使用泥土和金属矿石或精炼金属建造，与原版液培砖处于同一科技。",
                 "A planting brick with its own environment-control system, made for vacuum, " +
                 "extreme temperatures, and places far from the colony.\n\n" +
                 "The brick automatically keeps a planted crop at its ideal temperature and " +
@@ -84,7 +84,7 @@ namespace SpacePlantingBrick
                 "plants such as Pincha Pepper. The sprite size and placement match the vanilla " +
                 "Hydroponic Farm.\n\n" +
                 "Built from dirt plus metal ore or refined metal, and unlocked by the same tech " +
-                "as the standard Farm Tile.");
+                "as the Hydroponic Farm.");
             BUILDINGS.PREFABS.SPACEPLANTINGBRICK.EFFECT = L(zh,
                 "自动维持植物适宜温度\n灌溉液需接入液体管道\n气体灌溉作物可接入气体管道\n固体肥料由复制人搬运\n" +
                 "内置营养液槽与生长介质\n" +

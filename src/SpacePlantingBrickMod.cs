@@ -17,8 +17,8 @@ namespace SpacePlantingBrick
     /// Run from the prefix of GeneratedBuildings.LoadGeneratedBuildings: Db is
     /// already initialized at this point, but the building defs (and their
     /// TechItem post-processing) have not been created yet. Adding the ID to
-    /// FineDining here therefore makes BuildingDef.PostProcess create the
-    /// TechItem in the same tech as the vanilla Farm Tile.
+    /// Agriculture here therefore makes BuildingDef.PostProcess create the
+    /// TechItem in the same tech as the vanilla Hydroponic Farm.
     /// </summary>
     [HarmonyPatch(typeof(GeneratedBuildings), nameof(GeneratedBuildings.LoadGeneratedBuildings))]
     public static class GeneratedBuildingsPatch
@@ -45,7 +45,7 @@ namespace SpacePlantingBrick
             // Keep the tech unlock idempotent; if the database is rebuilt the
             // building must be re-added before its BuildingDef is post-processed.
             Tech farmTech = Db.Get().Techs != null
-                ? Db.Get().Techs.TryGet("FineDining")
+                ? Db.Get().Techs.TryGet("Agriculture")
                 : null;
             if (farmTech != null && !farmTech.unlockedItemIDs.Contains(SpacePlantingBrickConfig.ID))
             {

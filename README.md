@@ -19,7 +19,7 @@
   - **仅透气**：气体和热量可以进出植物所在格，但液体不能进入。
   - **透气透水**：气体、液体和热量都可以正常进出植物所在格。
 - **环境需求全包**：无论选择哪种环境模式，植物所需的气压、温度、光照和辐射条件都由种植砖维持；外界气压、气体种类、光照、温度、辐射和液体不会让植物枯萎或淹死。灌溉液/气体和肥料仍需自行供应。
-- **与普通种植砖同科技**：和原版种植砖一起在“精致餐饮”科技解锁，建造菜单位于“食物 → 农业”。
+- **与液培砖同科技**：和原版液培砖一起在“农业”科技解锁，建造菜单位于“食物 → 农业”。
 - **材料**：100 kg 泥土 + 50 kg 金属矿石或精炼金属。
 - **中英文界面**：根据游戏语言自动显示中文或英文。
 
@@ -94,7 +94,7 @@ An **Oxygen Not Included** mod that adds a 1x1 **Space Planting Brick**, bringin
   - **Gas Permeable**: gas and heat pass through the plant's cells, but liquid cannot enter.
   - **Gas + Liquid Permeable**: gas, liquid, and heat flow through the plant's cells normally.
 - **All environment needs supplied**: in every environment mode, the brick maintains the crop's pressure, temperature, light, and radiation conditions. External pressure, gas type, light, temperature, radiation, or liquid will not wilt or drown the crop. Irrigation liquid/gas and fertilizer still have to be supplied.
-- **Same tech as the standard Farm Tile**: unlocked in Fine Dining, listed under Food → Farming.
+- **Same tech as the Hydroponic Farm**: unlocked in Agriculture, listed under Food → Farming.
 - **Materials**: 100 kg dirt + 50 kg metal ore or refined metal.
 - **Chinese and English UI**: text follows the current game language.
 
