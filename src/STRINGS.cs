@@ -21,6 +21,14 @@ namespace SpacePlantingBrick
             }
         }
 
+        /// <summary>
+        /// Text shown for the mod itself in the in-game Mods screen.
+        /// </summary>
+        public static class MOD_INFO
+        {
+            public static LocString DESCRIPTION;
+        }
+
         public static class UI
         {
             public static class SPACEPLANTINGBRICK
@@ -103,6 +111,35 @@ namespace SpacePlantingBrick
             BUILDINGS.PREFABS.SPACEPLANTINGBRICK.FLAVOR = L(zh,
                 "\"在真空里，每一滴营养液都要从殖民地送上来。\"",
                 "\"In vacuum, every drop of nutrient solution has to be shipped from the colony.\"");
+
+            MOD_INFO.DESCRIPTION = L(zh,
+                "添加 1x1 的太空种植砖。自动把植物维持在它最适宜的温度，并在需要时点亮内置生长灯。" +
+                "灌溉液需要通过液体管道输入砖体；以气体为灌溉物的作物还可接入气体管道；" +
+                "固体肥料由复制人搬运，不再免费提供资源。" +
+                "在建筑详情面板下方的功能区可在“完全隔绝”“仅透气”“透气透水”三档之间循环切换：" +
+                "完全隔绝时，植物所在格不与外界交换热量、气体和液体；" +
+                "仅透气时，气体和热量可以通过，液体不能进入；" +
+                "透气透水时，气体、液体和热量都可以正常进出。" +
+                "无论选择哪种模式，植物所需的气压、温度、光照和辐射条件都由种植砖维持，植物不受外界环境影响；" +
+                "灌溉和肥料仍需自行供应。" +
+                "砖体贴图取自原版液培砖并改为深空冷色，尺寸和位置也直接沿用原版液培砖（包括动画帧偏移）；" +
+                "旋转沿用原版液培砖的 FlipV 逻辑，倒置后植物向下生长，适合火椒等垂吊植物。" +
+                "使用泥土与金属矿石/精炼金属建造，与原版液培砖处于同一科技。",
+                "Adds a 1x1 Space Planting Brick. It automatically keeps a planted crop at its ideal " +
+                "temperature and turns on its integrated grow light when needed. Irrigation liquid must " +
+                "be piped into the brick; crops that use a gas as irrigation can use the gas pipe, and " +
+                "solid fertilizer must be delivered by duplicants. Resources are no longer supplied for " +
+                "free. The action area below the building details panel cycles through Fully Sealed, Gas " +
+                "Permeable, and Gas + Liquid Permeable. When sealed, the plant's cells exchange no heat, " +
+                "gas, or liquid with the outside. Gas Permeable lets gas and heat through but blocks " +
+                "liquid; Gas + Liquid Permeable lets gas, liquid, and heat pass normally. In every mode, " +
+                "the brick maintains the crop's pressure, temperature, light, and radiation conditions, " +
+                "so the crop is unaffected by the outside environment; irrigation and fertilizer still " +
+                "have to be supplied. The brick reuses the vanilla Hydroponic Farm art in a cold " +
+                "deep-space palette and keeps the vanilla sprite size, bounds, and animation-frame " +
+                "offset. It uses the vanilla Hydroponic Farm's FlipV rotation logic, so inverted bricks " +
+                "grow crops downwards, which suits hanging plants such as Pincha Pepper. Built from dirt " +
+                "plus metal ore or refined metal, and unlocked by the same tech as the Hydroponic Farm.");
 
             UI.SPACEPLANTINGBRICK.SEALED = L(zh, "完全隔绝", "Fully Sealed");
             UI.SPACEPLANTINGBRICK.GAS_PERMEABLE = L(zh, "仅透气", "Gas Permeable");
