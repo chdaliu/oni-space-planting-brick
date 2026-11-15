@@ -9,7 +9,7 @@
 ## 特性
 
 - **自动温度调节**：读取植物可正常生长的温度范围，并把植物维持在该范围的中点。
-- **需要实际资源**：不再免费提供灌溉液和肥料。液体灌溉需要通过液体管道输入砖体；以气体为灌溉物的作物可以接入气体管道，也可以由复制人手动搬运；固体肥料由复制人搬运。作物仍会正常消耗资源。
+- **需要实际资源**：不再免费提供灌溉液和肥料。液体灌溉需要通过液体管道输入砖体；以气体为灌溉物的作物可以接入气体管道，也可以由复制人手动搬运；固体肥料由复制人搬运。作物仍会正常消耗资源。**管道只吸取作物实际需要的灌溉液/气体**：管道里是错误液体或气体时不会被吸入，已有错误灌溉物会在换作物或重新加载时倒出。
 - **自带生长灯**：需要光照的植物会自动点亮砖内生长灯；喜欢黑暗的植物不会开灯。
 - **与原版液培砖同尺寸同位置**：世界贴图使用原版液培砖的 248 x 248 边界、124 x 124 像素贴图，以及原版动画里的帧偏移；建造图标使用原版 244 x 228 边界和 122 x 114 像素图标。
 - **液培砖改色**：直接沿用原版液培砖的贴图，保留金属框架、营养液槽、生长介质、液位观察窗和进液口，只改颜色：钢材偏蓝灰、营养液青色、基质深靛蓝；形状、尺寸、位置和放置蓝图都不变。
@@ -27,7 +27,7 @@
 
 1. 在“食物 → 农业”中建造太空种植砖。
 2. 像使用普通种植砖一样选择并种下种子。
-3. 把液体管道接到砖体以供应灌溉液；气草等以气体为灌溉物的作物可接入气体管道。固体肥料由复制人搬运；需要光照的植物会自动获得光照。
+3. 把液体管道接到砖体以供应灌溉液（例如刺花需要**净水**，污染水不会被吸入）；气草等以气体为灌溉物的作物可接入气体管道。固体肥料由复制人搬运；需要光照的植物会自动获得光照。
 4. 用详情面板下方功能区的“环境”按钮循环切换完全隔绝 / 仅透气 / 透气透水。
 5. 需要倒立种植时（例如火椒），在建造时使用旋转键（默认 `O`）翻转砖体。
 
@@ -38,7 +38,7 @@
 - 仅透气模式只影响格子的气体/液体交换：恢复气体和热量交换，但保留液体隔绝。
 - 透气透水模式恢复这些格子的正常气体、液体和热量交换；环境需求仍由种植砖维持。
 - 倒置建造时砖体仍在原来的格子里，植物种在下方；完全隔绝模式会同时封锁砖体和植物所在的格子。
-- 液体进液口是实际的液体管道接口，需要连接液体管道来供应灌溉液。
+- 液体进液口是实际的液体管道接口，需要连接液体管道来供应灌溉液。砖体只吸取当前作物需要的灌溉液/气体；管道里是错误液体或气体时不会吸入，避免错误资源占满输入缓冲。
 - 以气体为灌溉物的作物（例如气草需要氯气）可以接入砖体的气体输入口，也可以由复制人手动搬运；不接气体管道时会自动保留手动搬运方式。
 - 固体肥料仍需复制人搬运。
 - 砖内存储有物品时，可以使用建筑菜单中的“清空存储”按钮，把送错的液体、气体或肥料倒到附近地面。
@@ -84,7 +84,7 @@ An **Oxygen Not Included** mod that adds a 1x1 **Space Planting Brick**, bringin
 ## Features
 
 - **Automatic temperature control**: reads the crop's comfortable temperature range and keeps the plant at its midpoint.
-- **Requires real resources**: irrigation liquid and fertilizer are no longer supplied for free. Liquid irrigation must be piped into the brick; crops that use a gas as irrigation can use the optional gas pipe or manual duplicant delivery, and solid fertilizer is delivered by duplicants. The crop consumes the resources normally.
+- **Requires real resources**: irrigation liquid and fertilizer are no longer supplied for free. Liquid irrigation must be piped into the brick; crops that use a gas as irrigation can use the optional gas pipe or manual duplicant delivery, and solid fertilizer is delivered by duplicants. The crop consumes the resources normally. **The pipes only absorb the irrigation liquid/gas the crop actually needs**: a wrong liquid or gas is not pulled in, and leftover wrong irrigation is dumped when the crop changes or the save is reloaded.
 - **Integrated grow light**: light-loving crops automatically receive the brick's grow light; crops that prefer darkness keep it off.
 - **Vanilla Hydroponic Farm size and placement**: the world symbol uses the vanilla 248 x 248 bounds, 124 x 124 px sprite, and the vanilla animation-frame offset. The build icon uses the vanilla 244 x 228 bounds and 122 x 114 px icon.
 - **Hydroponic-farm recolour**: reuses the vanilla Hydroponic Farm art, keeping its metal frame, nutrient reservoir, grow bed, sight glass, and liquid port. Only the palette changes: blue-grey steel, cyan nutrient solution, and deep-indigo growing medium. The shape, size, placement, and placement blueprint stay identical to the vanilla tile.
@@ -102,7 +102,7 @@ An **Oxygen Not Included** mod that adds a 1x1 **Space Planting Brick**, bringin
 
 1. Build the Space Planting Brick under Food → Farming.
 2. Select and plant a seed exactly like a normal farm tile.
-3. Connect a liquid pipe to supply irrigation; gas-irrigation crops such as Gas Grass can use the gas pipe. Let duplicants deliver solid fertilizer; light-loving crops receive light automatically.
+3. Connect a liquid pipe to supply irrigation (for example, Bristle Blossom needs **clean Water**; Polluted Water is not absorbed); gas-irrigation crops such as Gas Grass can use the gas pipe. Let duplicants deliver solid fertilizer; light-loving crops receive light automatically.
 4. Use the **Environment** button in the action area below the details panel to cycle through Fully Sealed, Gas Permeable, and Gas + Liquid Permeable.
 5. To grow a hanging crop such as Pincha Pepper, use the rotate key (`O` by default) while placing the brick to flip it.
 
@@ -113,7 +113,7 @@ An **Oxygen Not Included** mod that adds a 1x1 **Space Planting Brick**, bringin
 - Gas Permeable only changes cell exchange: gas and heat pass, liquid stays blocked.
 - Gas + Liquid Permeable restores normal gas, liquid, and heat exchange; the brick still maintains all environment needs.
 - When built inverted, the brick stays in its cell and the crop is planted below it. Fully Sealed seals both the brick cell and the crop cells.
-- The liquid port is a working liquid-pipe connection; connect a liquid pipe to supply irrigation.
+- The liquid port is a working liquid-pipe connection; connect a liquid pipe to supply irrigation. The brick only absorbs the irrigation liquid/gas the current crop needs; a wrong liquid or gas is left in the pipe instead of filling the input buffer.
 - Crops with gas irrigation (for example Gas Grass with Chlorine) can use the brick's gas input, or fall back to manual duplicant delivery when no gas pipe is connected.
 - Solid fertilizer still has to be delivered by duplicants.
 - When the internal storage is not empty, the building menu's **Empty Storage** button lets duplicants dump wrong liquids, gases, or fertilizer onto the ground.

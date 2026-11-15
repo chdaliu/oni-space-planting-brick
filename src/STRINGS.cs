@@ -94,13 +94,14 @@ namespace SpacePlantingBrick
                 "Built from dirt plus metal ore or refined metal, and unlocked by the same tech " +
                 "as the Hydroponic Farm.");
             BUILDINGS.PREFABS.SPACEPLANTINGBRICK.EFFECT = L(zh,
-                "自动维持植物适宜温度\n灌溉液需接入液体管道\n气体灌溉作物可接入气体管道\n固体肥料由复制人搬运\n" +
+                "自动维持植物适宜温度\n灌溉液需接入液体管道\n只吸取作物所需灌溉物\n气体灌溉作物可接入气体管道\n固体肥料由复制人搬运\n" +
                 "内置营养液槽与生长介质\n" +
                 "需要光照时自带生长灯\n可切换完全隔绝 / 仅透气 / 透气透水\n" +
                 "植物气压/温度/光照/辐射由砖体维持\n植物不受外界环境影响\n" +
                 "可倒置种植火椒等垂吊植物\n尺寸与位置同原版液培砖\n" +
                 "泥土 + 金属矿石/精炼金属建造",
                 "Keeps crops at their ideal temperature\nLiquid irrigation must be piped in\n" +
+                "Only the crop's required irrigation is absorbed\n" +
                 "Gas-irrigation crops can use a gas pipe\nSolid fertilizer delivered by duplicants\n" +
                 "Hydroponic nutrient reservoir and grow bed\n" +
                 "Integrated grow light when needed\nCycle Fully Sealed / Gas Permeable / Gas + Liquid Permeable\n" +
@@ -121,7 +122,7 @@ namespace SpacePlantingBrick
                 "仅透气时，气体和热量可以通过，液体不能进入；" +
                 "透气透水时，气体、液体和热量都可以正常进出。" +
                 "无论选择哪种模式，植物所需的气压、温度、光照和辐射条件都由种植砖维持，植物不受外界环境影响；" +
-                "灌溉和肥料仍需自行供应。" +
+                "灌溉和肥料仍需自行供应，且管道只吸取作物需要的灌溉液/气体。" +
                 "砖体贴图取自原版液培砖并改为深空冷色，尺寸和位置也直接沿用原版液培砖（包括动画帧偏移）；" +
                 "旋转沿用原版液培砖的 FlipV 逻辑，倒置后植物向下生长，适合火椒等垂吊植物。" +
                 "使用泥土与金属矿石/精炼金属建造，与原版液培砖处于同一科技。",
@@ -135,7 +136,8 @@ namespace SpacePlantingBrick
                 "liquid; Gas + Liquid Permeable lets gas, liquid, and heat pass normally. In every mode, " +
                 "the brick maintains the crop's pressure, temperature, light, and radiation conditions, " +
                 "so the crop is unaffected by the outside environment; irrigation and fertilizer still " +
-                "have to be supplied. The brick reuses the vanilla Hydroponic Farm art in a cold " +
+                "have to be supplied, and the pipes only absorb the irrigation liquid/gas the crop " +
+                "actually uses. The brick reuses the vanilla Hydroponic Farm art in a cold " +
                 "deep-space palette and keeps the vanilla sprite size, bounds, and animation-frame " +
                 "offset. It uses the vanilla Hydroponic Farm's FlipV rotation logic, so inverted bricks " +
                 "grow crops downwards, which suits hanging plants such as Pincha Pepper. Built from dirt " +
@@ -182,12 +184,14 @@ namespace SpacePlantingBrick
                 "Required resources: {0}");
             UI.SPACEPLANTINGBRICK.NUTRIENTS_TOOLTIP = L(zh,
                 "这些是植物生长所需的灌溉物和肥料。液体灌溉需要通过液体管道输入砖体；" +
+                "管道里不是该植物所需灌溉物的液体或气体不会被吸入；" +
                 "气体灌溉作物可以接入气体管道，也可以由复制人手动搬运；固体肥料由复制人搬运。" +
                 "种植砖不会自动补充资源。",
                 "These are the irrigation and fertilizer the crop needs. Liquid irrigation must be " +
-                "piped into the brick; gas-irrigation crops can use a gas pipe or manual duplicant " +
-                "delivery, and solid fertilizer is delivered by duplicants. The brick does not " +
-                "supply resources for free.");
+                "piped into the brick; liquids or gases in the pipe that are not the crop's " +
+                "required irrigation are not absorbed; gas-irrigation crops can use a gas pipe or " +
+                "manual duplicant delivery, and solid fertilizer is delivered by duplicants. The " +
+                "brick does not supply resources for free.");
 
             UI.SPACEPLANTINGBRICK.GROW_LIGHT_ON = L(zh, "生长灯：开启", "Grow light: on");
             UI.SPACEPLANTINGBRICK.GROW_LIGHT_OFF = L(zh, "生长灯：关闭", "Grow light: off");

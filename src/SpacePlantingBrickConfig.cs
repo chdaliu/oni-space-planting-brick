@@ -96,7 +96,11 @@ namespace SpacePlantingBrick
             consumer.consumptionRate = 1f;
             consumer.capacityKG = 5f;
             consumer.capacityTag = GameTags.Liquid;
-            consumer.wrongElementResult = ConduitConsumer.WrongElementResult.Dump;
+            // SpacePlantingBrick filters the pipe contents and only enables the
+            // consumer for the crop's required liquid. Keeping a wrong liquid
+            // inside the brick (instead of dumping it on the ground) also makes
+            // the old "wrong liquid blocks the input" save state harmless.
+            consumer.wrongElementResult = ConduitConsumer.WrongElementResult.Store;
 
             Storage storage = BuildingTemplates.CreateDefaultStorage(go);
             storage.capacityKg = 500f;

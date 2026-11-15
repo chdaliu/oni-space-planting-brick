@@ -9,21 +9,29 @@ namespace SpacePlantingBrick
     /// external gas pressure or gas type. PressureVulnerable still runs
     /// normally for plants outside the brick.
     ///
-    /// The postfix runs after PressureVulnerable has read the real cell data,
-    /// so the state machine sees the brick-provided pressure instead.
+    /// GetPressureOverArea is where PressureVulnerable reads the real cell
+    /// pressure and decides whether the atmosphere is safe. Overriding the
+    /// result here makes that original logic see a safe area, so it never
+    /// fires a "wrong atmosphere / wrong pressure" transition. Overriding the
+    /// state machine values after SlicedSim1000ms instead would flip the
+    /// plant between unsafe and safe every second in a vacuum cell, which
+    /// repeatedly cancels the wilt-recovery timer and leaves the crop stuck
+    /// in the wilting state.
     /// </summary>
-    [HarmonyPatch(typeof(PressureVulnerable), nameof(PressureVulnerable.SlicedSim1000ms))]
-    public static class PressureVulnerablePatch
+    [HarmonyPatch(typeof(PressureVulnerable), "GetPressureOverArea")]
+    public static class PressureVulnerableAreaPatch
     {
         private const float PreferredInternalPressure = 2f;
 
-        public static void Postfix(PressureVulnerable __instance)
+        public static void Postfix(
+            PressureVulnerable __instance, ref float __result)
         {
-            SpacePlantingBrick brick = SpacePlantingBrick.FindForPlant(__instance.gameObject);
-            if (brick == null || __instance.smi == null)
+            if (SpacePlantingBrick.FindForPlant(__instance.gameObject) == null)
             {
                 return;
             }
+
+            __instance.testAreaElementSafe = true;
 
             float pressure = PreferredInternalPressure;
             float low = __instance.pressureWarning_Low;
@@ -33,9 +41,7 @@ namespace SpacePlantingBrick
                 pressure = Mathf.Clamp(pressure, low + 0.01f, high - 0.01f);
             }
 
-            __instance.smi.sm.pressure.Set(pressure, __instance.smi);
-            __instance.smi.sm.safe_element.Set(true, __instance.smi);
-            __instance.testAreaElementSafe = true;
+            __result = pressure;
         }
     }
 

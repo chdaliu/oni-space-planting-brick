@@ -13,7 +13,9 @@ namespace SpacePlantingBrick
     /// Resources are not supplied for free: liquid irrigation must arrive
     /// through the brick's liquid pipe, and solid fertilizer must be delivered
     /// by duplicants. Crops whose irrigation is not a liquid (for example
-    /// Chlorine for Gas Grass) fall back to manual delivery instead.
+    /// Chlorine for Gas Grass) fall back to manual delivery instead. The pipe
+    /// input is filtered to the crop's required irrigation resource so a
+    /// wrong liquid or gas cannot fill the input buffer.
     ///
     /// Light: only crops with an IlluminationVulnerable component that does not
     /// prefer darkness use the integrated grow light.
@@ -72,7 +74,16 @@ namespace SpacePlantingBrick
         private Storage storage;
         private Light2D growLight;
         private Rotatable rotatable;
+        private Building building;
         private GameObject plant;
+
+        // Pipe input filtering. The brick's pipe should only take the
+        // irrigation resource the planted crop actually uses; otherwise a
+        // wrong liquid/gas fills the 5 kg input buffer and the correct
+        // resource can never enter.
+        private ConduitConsumer liquidConsumer;
+        private ConduitConsumer gasConsumer;
+        private bool pendingIrrigationDump;
 
         private float refreshTimer = RefreshInterval;
         private float maintainTimer = RefreshInterval;
@@ -81,6 +92,8 @@ namespace SpacePlantingBrick
         private readonly List<int> desiredCells = new List<int>();
         private readonly List<int> releaseCells = new List<int>();
         private readonly List<Tag> supplyTags = new List<Tag>();
+        private readonly List<Tag> requiredLiquidTags = new List<Tag>();
+        private readonly List<Tag> requiredGasTags = new List<Tag>();
 
         private float targetTemperature = 293.15f;
         private bool needsLight;
@@ -175,6 +188,7 @@ namespace SpacePlantingBrick
             storage = GetComponent<Storage>();
             growLight = GetComponent<Light2D>();
             rotatable = GetComponent<Rotatable>();
+            building = GetComponent<Building>();
 
             if (growLight != null)
             {
@@ -219,6 +233,10 @@ namespace SpacePlantingBrick
                 maintainTimer = RefreshInterval;
                 Maintain();
             }
+
+            // Keep the pipe filters in sync every sim tick so a wrong
+            // liquid/gas is never pumped into the brick for long.
+            UpdateConduitFilters();
         }
 
         public void CycleEnvironmentMode()
@@ -270,6 +288,9 @@ namespace SpacePlantingBrick
                 plant = current;
                 plantConfigured = false;
                 supplyTags.Clear();
+                requiredLiquidTags.Clear();
+                requiredGasTags.Clear();
+                pendingIrrigationDump = false;
                 needsLight = false;
 
                 if (growLight != null)
@@ -292,6 +313,8 @@ namespace SpacePlantingBrick
         private void ConfigurePlant()
         {
             supplyTags.Clear();
+            requiredLiquidTags.Clear();
+            requiredGasTags.Clear();
             bool pipeIrrigation = false;
 
             StateMachineController controller = plant.GetComponent<StateMachineController>();
@@ -311,6 +334,21 @@ namespace SpacePlantingBrick
                         AddSupplyTag(tag);
 
                         Element element = ElementLoader.FindElementByTag(tag);
+                        if (element != null && element.IsLiquid)
+                        {
+                            if (!requiredLiquidTags.Contains(tag))
+                            {
+                                requiredLiquidTags.Add(tag);
+                            }
+                        }
+                        else if (element != null && element.IsGas)
+                        {
+                            if (!requiredGasTags.Contains(tag))
+                            {
+                                requiredGasTags.Add(tag);
+                            }
+                        }
+
                         if (element == null || !element.IsLiquid)
                         {
                             pipeIrrigation = false;
@@ -353,6 +391,11 @@ namespace SpacePlantingBrick
             needsLight = illumination != null && !illumination.prefersDarkness;
 
             plantConfigured = true;
+
+            // Drop any irrigation resource left over from a previous crop or
+            // from the old "accept any liquid" behaviour once the new crop's
+            // requirements are known.
+            pendingIrrigationDump = true;
         }
 
         private void ApplySupplyMethod(bool pipeIrrigation)
@@ -381,6 +424,175 @@ namespace SpacePlantingBrick
             {
                 plant.Trigger((int)GameHashes.PlanterStorage, storage);
             }
+
+            UpdateConduitFilters();
+        }
+
+        // ------------------------------------------------------------------
+        // pipe input filtering
+        // ------------------------------------------------------------------
+
+        private void UpdateConduitFilters()
+        {
+            if (Game.Instance == null)
+            {
+                return;
+            }
+
+            UpdateConduitConsumer(
+                GetLiquidConsumer(),
+                ConduitType.Liquid,
+                GetLiquidInputCell(),
+                requiredLiquidTags);
+
+            UpdateConduitConsumer(
+                GetGasConsumer(),
+                ConduitType.Gas,
+                GetGasInputCell(),
+                requiredGasTags);
+
+            if (pendingIrrigationDump && plant != null && storage != null)
+            {
+                pendingIrrigationDump = false;
+
+                // Removes irrigation liquid left over from a previous crop or
+                // from a wrong liquid that was piped in before this crop was
+                // configured. IrrigationMonitor already knows which elements
+                // the current crop accepts.
+                IrrigationMonitor.Instance.DumpIncorrectFertilizers(
+                    storage, plant);
+            }
+        }
+
+        private void UpdateConduitConsumer(
+            ConduitConsumer consumer,
+            ConduitType conduitType,
+            int inputCell,
+            List<Tag> acceptedTags)
+        {
+            if (consumer == null)
+            {
+                return;
+            }
+
+            bool hasAccepted = acceptedTags.Count > 0;
+            bool pipeMatches = false;
+
+            if (hasAccepted && Grid.IsValidCell(inputCell))
+            {
+                ConduitFlow flow = conduitType == ConduitType.Gas
+                    ? Game.Instance.gasConduitFlow
+                    : Game.Instance.liquidConduitFlow;
+                if (flow != null)
+                {
+                    ConduitFlow.ConduitContents contents =
+                        flow.GetContents(inputCell);
+
+                    // An empty pipe is fine; the consumer may wait for the
+                    // correct resource to arrive.
+                    if (contents.mass <= 0f)
+                    {
+                        pipeMatches = true;
+                    }
+                    else
+                    {
+                        Element element =
+                            ElementLoader.FindElementByHash(contents.element);
+                        pipeMatches = element != null
+                            && ElementMatchesAny(element, acceptedTags);
+                    }
+                }
+            }
+
+            // Only consume while the pipe carries an accepted resource. This
+            // keeps wrong liquids/gases in the pipe instead of eating them or
+            // filling the brick's input buffer.
+            consumer.SetOnState(hasAccepted && pipeMatches);
+            consumer.capacityTag = hasAccepted && acceptedTags.Count == 1
+                ? acceptedTags[0]
+                : (conduitType == ConduitType.Gas
+                    ? GameTags.Gas
+                    : GameTags.Liquid);
+        }
+
+        private static bool ElementMatchesAny(Element element, List<Tag> tags)
+        {
+            for (int i = 0; i < tags.Count; i++)
+            {
+                if (element.HasTag(tags[i]))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private ConduitConsumer GetLiquidConsumer()
+        {
+            if (liquidConsumer == null)
+            {
+                ConduitConsumer[] consumers = GetComponents<ConduitConsumer>();
+                for (int i = 0; i < consumers.Length; i++)
+                {
+                    if (consumers[i].conduitType == ConduitType.Liquid
+                        && !consumers[i].useSecondaryInput)
+                    {
+                        liquidConsumer = consumers[i];
+                        break;
+                    }
+                }
+            }
+            return liquidConsumer;
+        }
+
+        private ConduitConsumer GetGasConsumer()
+        {
+            if (gasConsumer == null)
+            {
+                SpacePlantingGasInput gasInput =
+                    GetComponent<SpacePlantingGasInput>();
+                if (gasInput != null)
+                {
+                    gasConsumer = gasInput.Consumer;
+                }
+
+                if (gasConsumer == null)
+                {
+                    ConduitConsumer[] consumers = GetComponents<ConduitConsumer>();
+                    for (int i = 0; i < consumers.Length; i++)
+                    {
+                        if (consumers[i].useSecondaryInput
+                            && consumers[i].conduitType == ConduitType.Gas)
+                        {
+                            gasConsumer = consumers[i];
+                            break;
+                        }
+                    }
+                }
+            }
+            return gasConsumer;
+        }
+
+        private int GetLiquidInputCell()
+        {
+            if (building == null)
+            {
+                building = GetComponent<Building>();
+            }
+            return building != null ? building.GetUtilityInputCell() : -1;
+        }
+
+        private int GetGasInputCell()
+        {
+            if (building == null)
+            {
+                building = GetComponent<Building>();
+            }
+            return building != null
+                ? Grid.OffsetCell(
+                    building.NaturalBuildingCell(),
+                    building.GetRotatedOffset(SpacePlantingGasInput.PortOffset))
+                : -1;
         }
 
         private void AddSupplyTag(Tag tag)

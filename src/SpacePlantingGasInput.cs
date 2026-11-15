@@ -18,6 +18,12 @@ namespace SpacePlantingBrick
 
         private int inputCell = -1;
         private FlowUtilityNetwork.NetworkItem networkItem;
+        private SpacePlantingGasConduitConsumer consumer;
+
+        public ConduitConsumer Consumer
+        {
+            get { return consumer; }
+        }
 
         protected override void OnSpawn()
         {
@@ -33,14 +39,17 @@ namespace SpacePlantingBrick
                 building.NaturalBuildingCell(),
                 building.GetRotatedOffset(PortOffset));
 
-            SpacePlantingGasConduitConsumer consumer =
-                gameObject.AddComponent<SpacePlantingGasConduitConsumer>();
+            consumer = gameObject.AddComponent<SpacePlantingGasConduitConsumer>();
             consumer.conduitType = ConduitType.Gas;
             consumer.useSecondaryInput = true;
             consumer.consumptionRate = 1f;
             consumer.capacityKG = 5f;
             consumer.capacityTag = GameTags.Gas;
-            consumer.wrongElementResult = ConduitConsumer.WrongElementResult.Dump;
+            // SpacePlantingBrick filters the pipe contents and only enables the
+            // consumer for the crop's required gas, so a wrong gas should be
+            // kept inside the brick rather than dumped onto the ground.
+            consumer.wrongElementResult =
+                ConduitConsumer.WrongElementResult.Store;
 
             networkItem = new FlowUtilityNetwork.NetworkItem(
                 ConduitType.Gas, Endpoint.Sink, inputCell, gameObject);
