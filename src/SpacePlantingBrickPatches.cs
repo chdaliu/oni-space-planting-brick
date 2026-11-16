@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using HarmonyLib;
 using UnityEngine;
 
@@ -133,6 +134,68 @@ namespace SpacePlantingBrick
             {
                 __result = 0;
             }
+        }
+    }
+
+    /// <summary>
+    /// DigTool.PlaceDig refuses to place a dig marker in a cell when any
+    /// object in any object layer has a Constructable. An under-construction
+    /// building also registers its conduit ports in the conduit layer of the
+    /// port cell, even when the port is outside the building footprint. The
+    /// brick's gas port sits in the crop cell at (0, 1), so while the brick is
+    /// being built that cell looks occupied to the dig tool and cannot be
+    /// marked for digging.
+    ///
+    /// The port does not actually occupy the cell, so temporarily hide such
+    /// non-occupying Constructables while PlaceDig runs. This fixes digging
+    /// the crop cell of a brick that is queued under a natural tile.
+    /// </summary>
+    [HarmonyPatch(typeof(DigTool), nameof(DigTool.PlaceDig))]
+    public static class DigToolPlaceDigPatch
+    {
+        private static readonly List<KeyValuePair<int, GameObject>> hiddenPorts =
+            new List<KeyValuePair<int, GameObject>>();
+
+        public static void Prefix(int cell)
+        {
+            hiddenPorts.Clear();
+            if (!Grid.IsValidCell(cell))
+            {
+                return;
+            }
+
+            for (int layer = 0; layer < (int)ObjectLayer.NumLayers; layer++)
+            {
+                GameObject go = Grid.Objects[cell, layer];
+                if (go == null || go.GetComponent<Constructable>() == null)
+                {
+                    continue;
+                }
+
+                // Only hide constructions whose footprint does not include
+                // this cell, i.e. an out-of-footprint conduit port.
+                Building building = go.GetComponent<Building>();
+                if (building == null || building.PlacementCellsContainCell(cell))
+                {
+                    continue;
+                }
+
+                hiddenPorts.Add(new KeyValuePair<int, GameObject>(layer, go));
+            }
+
+            for (int i = 0; i < hiddenPorts.Count; i++)
+            {
+                Grid.Objects[cell, hiddenPorts[i].Key] = null;
+            }
+        }
+
+        public static void Postfix(int cell)
+        {
+            for (int i = 0; i < hiddenPorts.Count; i++)
+            {
+                Grid.Objects[cell, hiddenPorts[i].Key] = hiddenPorts[i].Value;
+            }
+            hiddenPorts.Clear();
         }
     }
 }
